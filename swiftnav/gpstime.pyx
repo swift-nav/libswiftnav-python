@@ -11,7 +11,7 @@ cimport gpstime_c
 import datetime
 
 cdef class GpsTime:
-  #cdef gpstime_c.gps_time_t gps_time
+  # cdef gpstime_c.gps_time_t gps_time
   def __init__(self,
 				       wn,
                tow):
@@ -40,3 +40,10 @@ def gpst_components2datetime(wn, tow):
 
 def gpst2datetime(GpsTime gpst):
   return gpst_components2datetime(gpst.wn, gpst.tow)
+
+def datetime2gpst(timestamp):
+  dt = timestamp - datetime.datetime(1980, 1, 6, 0, 0, 0) + \
+      datetime.timedelta(seconds=16)
+  wn = dt.days / 7
+  tow = (dt - datetime.timedelta(weeks=wn)).total_seconds()
+  return GpsTime(wn % 1024, tow)
