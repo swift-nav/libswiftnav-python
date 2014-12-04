@@ -217,7 +217,7 @@ def calc_sat_pos(Ephemeris eph, GpsTime time):
                  &eph_,
                  t_)
 
-  return pos_
+  return pos_, vel_, clock_err, clock_rate_err
 
 # def measure_b_with_external_ambs(alms, GpsTime timestamp,
 #                                    numpy_measurements,
