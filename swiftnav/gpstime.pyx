@@ -8,9 +8,10 @@
 # WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 
 cimport gpstime_c
+import datetime
 
 cdef class GpsTime:
-  #cdef gpstime_c.gps_time_t gps_time
+  # cdef gpstime_c.gps_time_t gps_time
   def __init__(self,
 				       wn,
                tow):
@@ -31,3 +32,10 @@ cdef class GpsTime:
       return self.gps_time.tow
     def __set__(self, tow):
       self.gps_time.tow = tow
+
+def datetime2gpst(timestamp):
+  dt = timestamp - datetime.datetime(1980, 1, 6, 0, 0, 0) + \
+      datetime.timedelta(seconds=16)
+  wn = dt.days / 7
+  tow = (dt - datetime.timedelta(weeks=wn)).total_seconds()
+  return GpsTime(wn % 1024, tow)
