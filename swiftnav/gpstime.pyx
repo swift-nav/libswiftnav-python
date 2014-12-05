@@ -38,4 +38,5 @@ def datetime2gpst(timestamp):
       datetime.timedelta(seconds=16)
   wn = dt.days / 7
   tow = (dt - datetime.timedelta(weeks=wn)).total_seconds()
-  return GpsTime(wn % 1024, tow)
+  # return GpsTime(wn % 1024, tow)
+  return GpsTime(wn, tow)
