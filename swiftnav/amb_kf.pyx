@@ -18,75 +18,75 @@ from gpstime_c cimport *
 from single_diff_c cimport *
 from dgnss_management_c cimport *
 
-def udu(M):
-  n = M.shape[0]
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] M_ = \
-    np.array(M, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
-    np.empty((n,n), dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
-    np.empty(n, dtype=np.double)
-  amb_kf_c.udu(n, <double *> &M_[0,0], <double *> &U[0,0], <double *> &D[0])
-  return UDU_decomposition(U, D)
+# def udu(M):
+#   n = M.shape[0]
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] M_ = \
+#     np.array(M, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
+#     np.empty((n,n), dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
+#     np.empty(n, dtype=np.double)
+#   amb_kf_c.udu(n, <double *> &M_[0,0], <double *> &U[0,0], <double *> &D[0])
+#   return UDU_decomposition(U, D)
 
-def reconstruct_udu(ud):
-  n = ud.D.shape[0]
+# def reconstruct_udu(ud):
+#   n = ud.D.shape[0]
 
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
-    np.array(ud.U, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
-    np.array(ud.D, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
+#     np.array(ud.U, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
+#     np.array(ud.D, dtype=np.double)
 
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] M = \
-    np.empty((n,n), dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] M = \
+#     np.empty((n,n), dtype=np.double)
 
-  amb_kf_c.reconstruct_udu(n, <double *> &U[0,0], <double *> &D[0], <double *> &M[0,0])
-  return M
+#   amb_kf_c.reconstruct_udu(n, <double *> &U[0,0], <double *> &D[0], <double *> &M[0,0])
+#   return M
 
-def update_scalar_measurement(h, R, U, D):
-  state_dim = h.shape[0]
+# def update_scalar_measurement(h, R, U, D):
+#   state_dim = h.shape[0]
 
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] h_ = \
-    np.array(h, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] U_ = \
-    np.array(U, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] D_ = \
-    np.array(D, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] k = \
-    np.empty(state_dim, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] h_ = \
+#     np.array(h, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] U_ = \
+#     np.array(U, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] D_ = \
+#     np.array(D, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] k = \
+#     np.empty(state_dim, dtype=np.double)
 
-  amb_kf_c.update_scalar_measurement(state_dim,
-                                       <double *> &h_[0],
-                                       <double> R,
-                                       <double *> &U_[0,0],
-                                       <double *> &D_[0],
-                                       <double *> &k[0])
-  return UDU_decomposition(U_, D_), k
+#   amb_kf_c.update_scalar_measurement(state_dim,
+#                                        <double *> &h_[0],
+#                                        <double> R,
+#                                        <double *> &U_[0,0],
+#                                        <double *> &D_[0],
+#                                        <double *> &k[0])
+#   return UDU_decomposition(U_, D_), k
 
-def filter_update(KalmanFilter kf, obs):
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] state_mean_ = \
-    np.empty(kf.state_dim, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] state_cov_U_ = \
-    np.empty((kf.state_dim, kf.state_dim), dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] state_cov_D_ = \
-    np.empty(kf.state_dim, dtype=np.double)
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] obs_ =  \
-    np.array(obs, dtype=np.double)
+# def filter_update(KalmanFilter kf, obs):
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] state_mean_ = \
+#     np.empty(kf.state_dim, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] state_cov_U_ = \
+#     np.empty((kf.state_dim, kf.state_dim), dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] state_cov_D_ = \
+#     np.empty(kf.state_dim, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] obs_ =  \
+#     np.array(obs, dtype=np.double)
 
-  amb_kf_c.kalman_filter_update(&(kf.kf), <double *> &obs_[0])
+#   amb_kf_c.kalman_filter_update(&(kf.kf), <double *> &obs_[0])
 
-  memcpy(&state_mean_[0], kf.kf.state_mean, kf.state_dim * sizeof(double))
-  memcpy(&state_cov_U_[0,0], kf.kf.state_cov_U, kf.state_dim * kf.state_dim * sizeof(double))
-  memcpy(&state_cov_D_[0], kf.kf.state_cov_D, kf.state_dim * sizeof(double))
+#   memcpy(&state_mean_[0], kf.kf.state_mean, kf.state_dim * sizeof(double))
+#   memcpy(&state_cov_U_[0,0], kf.kf.state_cov_U, kf.state_dim * kf.state_dim * sizeof(double))
+#   memcpy(&state_cov_D_[0], kf.kf.state_cov_D, kf.state_dim * sizeof(double))
 
-  return state_mean_, UDU_decomposition(state_cov_U_, state_cov_D_)
+#   return state_mean_, UDU_decomposition(state_cov_U_, state_cov_D_)
 
-class UDU_decomposition:
-  def __init__(self, U, D):
-    self.U = U
-    self.D = D
-  def reconstruct(self):
-    return reconstruct_udu(self)
+# class UDU_decomposition:
+#   def __init__(self, U, D):
+#     self.U = U
+#     self.D = D
+#   def reconstruct(self):
+#     return reconstruct_udu(self)
 
 cdef class KalmanFilter:
   def __init__(self,
@@ -296,51 +296,51 @@ cdef class KalmanFilter:
 #   amb_kf_c.assign_transition_mtx(state_dim, dt, &transition_mtx[0,0])
 #   return transition_mtx
 
-def get_d_mtx(num_sats):
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] D = \
-        np.empty((num_sats - 1, num_sats), dtype=np.double)
-  amb_kf_c.assign_d_mtx(num_sats, &D[0,0])
-  return D
+# def get_d_mtx(num_sats):
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] D = \
+#         np.empty((num_sats - 1, num_sats), dtype=np.double)
+#   amb_kf_c.assign_d_mtx(num_sats, &D[0,0])
+#   return D
 
-def get_e_mtx_from_alms(alms, GpsTime timestamp, ref_ecef):
-  n = len(alms)
-  cdef almanac_t al[32]
-  cdef almanac_t a_
-  for i, a in enumerate(alms):
-    a_ = (<Almanac> a).almanac
-    memcpy(&al[i], &a_, sizeof(almanac_t))
+# def get_e_mtx_from_alms(alms, GpsTime timestamp, ref_ecef):
+#   n = len(alms)
+#   cdef almanac_t al[32]
+#   cdef almanac_t a_
+#   for i, a in enumerate(alms):
+#     a_ = (<Almanac> a).almanac
+#     memcpy(&al[i], &a_, sizeof(almanac_t))
   
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
-    np.array(ref_ecef, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+#     np.array(ref_ecef, dtype=np.double)
 
-  cdef gps_time_t timestamp_ = timestamp.gps_time
+#   cdef gps_time_t timestamp_ = timestamp.gps_time
 
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] e_mtx = \
-        np.empty((len(alms), 3), dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] e_mtx = \
+#         np.empty((len(alms), 3), dtype=np.double)
 
-  amb_kf_c.assign_e_mtx_from_alms(len(alms), &al[0], timestamp_, &ref_ecef_[0], &e_mtx[0,0])
+#   amb_kf_c.assign_e_mtx_from_alms(len(alms), &al[0], timestamp_, &ref_ecef_[0], &e_mtx[0,0])
 
-  return e_mtx
+#   return e_mtx
 
-def get_de_mtx_from_alms(alms, GpsTime timestamp, ref_ecef):
-  n = len(alms)
-  cdef almanac_t al[32]
-  cdef almanac_t a_
-  for i, a in enumerate(alms):
-    a_ = (<Almanac> a).almanac
-    memcpy(&al[i], &a_, sizeof(almanac_t))
+# def get_de_mtx_from_alms(alms, GpsTime timestamp, ref_ecef):
+#   n = len(alms)
+#   cdef almanac_t al[32]
+#   cdef almanac_t a_
+#   for i, a in enumerate(alms):
+#     a_ = (<Almanac> a).almanac
+#     memcpy(&al[i], &a_, sizeof(almanac_t))
   
-  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
-    np.array(ref_ecef, dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+#     np.array(ref_ecef, dtype=np.double)
 
-  cdef gps_time_t timestamp_ = timestamp.gps_time
+#   cdef gps_time_t timestamp_ = timestamp.gps_time
 
-  cdef np.ndarray[np.double_t, ndim=2, mode="c"] de_mtx = \
-        np.empty((len(alms) - 1, 3), dtype=np.double)
+#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] de_mtx = \
+#         np.empty((len(alms) - 1, 3), dtype=np.double)
 
-  amb_kf_c.assign_de_mtx_from_alms(len(alms), &al[0], timestamp_, &ref_ecef_[0], &de_mtx[0,0])
+#   amb_kf_c.assign_de_mtx_from_alms(len(alms), &al[0], timestamp_, &ref_ecef_[0], &de_mtx[0,0])
 
-  return de_mtx
+#   return de_mtx
 
 # def get_obs_mtx_from_alms_using_sdiffs(alms, GpsTime timestamp, ref_ecef):
 #   n = len(alms)
