@@ -14,6 +14,8 @@ from amb_kf import KalmanFilter
 from amb_kf cimport *
 from amb_kf_c cimport *
 from single_diff_c cimport *
+from single_diff import SingleDiff
+from single_diff cimport SingleDiff
 from almanac cimport *
 from almanac_c cimport *
 from gpstime cimport *
@@ -21,6 +23,7 @@ from gpstime_c cimport *
 from libc.string cimport memcpy
 from libc.stdio cimport printf
 from sats_management_c cimport *
+
 
 def set_settings(phase_var_test, code_var_test,
                  phase_var_kf, code_var_kf,
@@ -33,8 +36,34 @@ def set_settings(phase_var_test, code_var_test,
                                         amb_init_var,
                                         new_int_var)
   
+def dgnss_init(sdiffs,
+               reciever_ecef):
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(reciever_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiff).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
 
-def dgnss_init(alms, GpsTime timestamp,
+  dgnss_management_c.dgnss_init(num_sdiffs, &sdiffs_[0], &ref_ecef_[0])
+
+
+def dgnss_update(sdiffs,
+                 reciever_ecef):
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(reciever_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiffs).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+  dgnss_management_c.dgnss_update(num_sdiffs, &sdiffs_[0], &ref_ecef_[0])
+
+
+def alm_dgnss_init(alms, GpsTime timestamp,
                numpy_measurements,
                reciever_ecef, b=None):
   n = len(alms)
@@ -71,7 +100,7 @@ def dgnss_init(alms, GpsTime timestamp,
   # dgnss_management_c.dgnss_init(n, &sdiffs[0], &ref_ecef_[0], &b_[0])
   dgnss_management_c.dgnss_init(n, &sdiffs[0], &ref_ecef_[0])
 
-def dgnss_update(alms, GpsTime timestamp,
+def alm_dgnss_update(alms, GpsTime timestamp,
                numpy_measurements,
                reciever_ecef):
   n = len(alms)
