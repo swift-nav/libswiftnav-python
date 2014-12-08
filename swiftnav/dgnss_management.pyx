@@ -150,11 +150,11 @@ def dgnss_iar_get_single_hyp(num_dds):
   dgnss_management_c.dgnss_iar_get_single_hyp(&hyp[0])
   return hyp
 
-def get_dgnss_kf():
-  cdef nkf_t *kf = dgnss_management_c.get_dgnss_kf()
-  cdef KalmanFilter pykf = KalmanFilter()
-  memcpy(&(pykf.kf), kf, sizeof(amb_kf_c.nkf_t))
-  return pykf
+# def get_dgnss_kf():
+#   cdef nkf_t *kf = dgnss_management_c.get_dgnss_kf()
+#   cdef KalmanFilter pykf = KalmanFilter()
+#   memcpy(&(pykf.kf), kf, sizeof(amb_kf_c.nkf_t))
+#   return pykf
 
 
 def get_stupid_state(num):
