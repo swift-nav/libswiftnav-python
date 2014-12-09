@@ -171,7 +171,25 @@ def get_sats_management():
   memcpy(&prns[0], sats_man.prns, sats_man.num_sats * sizeof(u8))
   return sats_man.num_sats, prns
 
-def measure_float_b(alms, GpsTime timestamp,
+def measure_float_b(sdiffs, reciever_ecef): #TODO eventually, want to get reciever_ecef from data
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(reciever_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiffs).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+  
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] b = \
+    np.empty(3, dtype=np.double)
+
+  dgnss_management_c.measure_amb_kf_b(&ref_ecef_[0],
+                                      num_sdiffs, &sdiffs_[0],
+                                      &b[0])
+  return b
+
+def alm_measure_float_b(alms, GpsTime timestamp,
                 numpy_measurements,
                 reciever_ecef): #TODO eventually, want to get reciever_ecef from data
   n = len(alms)
@@ -204,7 +222,29 @@ def measure_float_b(alms, GpsTime timestamp,
                                       &b[0])
   return b
 
-def measure_b_with_external_ambs(alms, GpsTime timestamp,
+def measure_b_with_external_ambs(sdiffs, ambs, reciever_ecef): #TODO eventually, want to get reciever_ecef from data
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(reciever_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiffs).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+  
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
+    np.array(ambs, dtype=np.double)
+
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] b = \
+    np.empty(3, dtype=np.double)
+
+  dgnss_management_c.measure_b_with_external_ambs(&ref_ecef_[0],
+                                                  num_sdiffs, &sdiffs_[0],
+                                                  &ambs_[0],
+                                                  &b[0])
+  return b
+
+def alm_measure_b_with_external_ambs(alms, GpsTime timestamp,
                                    numpy_measurements,
                                    ambs,
                                    reciever_ecef): #TODO eventually, want to get reciever_ecef from data
@@ -242,7 +282,29 @@ def measure_b_with_external_ambs(alms, GpsTime timestamp,
                                                   &b[0])
   return b
 
-def measure_iar_b_with_external_ambs(alms, GpsTime timestamp,
+def measure_iar_b_with_external_ambs(sdiffs, ambs, reciever_ecef): #TODO eventually, want to get reciever_ecef from data
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(reciever_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiffs).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+  
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
+    np.array(ambs, dtype=np.double)
+
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] b = \
+    np.empty(3, dtype=np.double)
+
+  dgnss_management_c.measure_iar_b_with_external_ambs(&ref_ecef_[0],
+                                                      num_sdiffs, &sdiffs_[0],
+                                                      &ambs_[0],
+                                                      &b[0])
+  return b
+
+def alm_measure_iar_b_with_external_ambs(alms, GpsTime timestamp,
                                      numpy_measurements,
                                      ambs,
                                      reciever_ecef): #TODO eventually, want to get reciever_ecef from data
@@ -280,7 +342,30 @@ def measure_iar_b_with_external_ambs(alms, GpsTime timestamp,
                                                       &b[0])
   return b
 
-def get_float_de_and_phase(alms, GpsTime timestamp,
+
+def get_float_de_and_phase(sdiffs, ref_ecef):
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(ref_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiff).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+
+  cdef np.ndarray[np.double_t, ndim=2, mode="c"] de = \
+    np.empty((32,3), dtype=np.double)
+
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] phase = \
+    np.empty(32, dtype=np.double)
+
+  m = dgnss_management_c.get_amb_kf_de_and_phase(num_sdiffs, &sdiffs_[0],
+                                                 &ref_ecef_[0],
+                                                 &de[0,0], &phase[0])
+
+  return de[:m-1], phase[:m-1]
+
+def alms_get_float_de_and_phase(alms, GpsTime timestamp,
                            numpy_measurements,
                            ref_ecef):
   n = len(alms)
@@ -317,7 +402,29 @@ def get_float_de_and_phase(alms, GpsTime timestamp,
 
   return de[:m-1], phase[:m-1]
 
-def get_iar_de_and_phase(alms, GpsTime timestamp,
+def get_iar_de_and_phase(sdiffs, ref_ecef):
+  num_sdiffs = len(sdiffs)
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ref_ecef_ = \
+    np.array(ref_ecef, dtype=np.double)
+  cdef sdiff_t sdiffs_[32]
+  cdef sdiff_t s_
+  for (i,sdiff) in enumerate(sdiffs):
+    s_ = (<SingleDiff> sdiff).sdiff
+    memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+  
+  cdef np.ndarray[np.double_t, ndim=2, mode="c"] de = \
+    np.empty((32,3), dtype=np.double)
+
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] phase = \
+    np.empty(32, dtype=np.double)
+
+  m = dgnss_management_c.get_iar_de_and_phase(num_sdiffs, &sdiffs_[0],
+                                              &ref_ecef_[0],
+                                              &de[0,0], &phase[0])
+
+  return de[:m-1], phase[:m-1]
+
+def alm_get_iar_de_and_phase(alms, GpsTime timestamp,
                          numpy_measurements,
                          ref_ecef):
   n = len(alms)
