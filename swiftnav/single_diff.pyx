@@ -22,12 +22,16 @@ cdef class SingleDiff:
                np.ndarray[np.double_t, ndim=1, mode="c"] sat_vel,
                snr,
                prn):
+    self.pseudorange = pseudorange
+    self.carrier_phase
+    self.doppler = doppler
     self.sat_pos = sat_pos
     self.sat_vel = sat_vel
+    self.snr = snr
     self.prn = prn
 
   def __repr__(self):
-    return "<SingleDiff prn=" + str(self.prn) + ">"
+    return "<SingleDiff prn=" + str(self.prn) + ", snr=" + str(self.snr) + ">"
 
   property pseudorange:
     def __get__(self):
