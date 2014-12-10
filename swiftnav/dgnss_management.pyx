@@ -35,7 +35,7 @@ def set_settings(phase_var_test, code_var_test,
                                         amb_drift_var,
                                         amb_init_var,
                                         new_int_var)
-  
+
 def dgnss_init(sdiffs,
                reciever_ecef):
   num_sdiffs = len(sdiffs)
@@ -58,8 +58,9 @@ def dgnss_update(sdiffs,
   cdef sdiff_t sdiffs_[32]
   cdef sdiff_t s_
   for (i,sdiff) in enumerate(sdiffs):
-    s_ = (<SingleDiff> sdiffs).sdiff
+    s_ = (<SingleDiff> sdiff).sdiff
     memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
+
   dgnss_management_c.dgnss_update(num_sdiffs, &sdiffs_[0], &ref_ecef_[0])
 
 
@@ -178,7 +179,7 @@ def measure_float_b(sdiffs, reciever_ecef): #TODO eventually, want to get reciev
   cdef sdiff_t sdiffs_[32]
   cdef sdiff_t s_
   for (i,sdiff) in enumerate(sdiffs):
-    s_ = (<SingleDiff> sdiffs).sdiff
+    s_ = (<SingleDiff> sdiff).sdiff
     memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
   
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] b = \
@@ -229,7 +230,7 @@ def measure_b_with_external_ambs(sdiffs, ambs, reciever_ecef): #TODO eventually,
   cdef sdiff_t sdiffs_[32]
   cdef sdiff_t s_
   for (i,sdiff) in enumerate(sdiffs):
-    s_ = (<SingleDiff> sdiffs).sdiff
+    s_ = (<SingleDiff> sdiff).sdiff
     memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
   
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
@@ -289,7 +290,7 @@ def measure_iar_b_with_external_ambs(sdiffs, ambs, reciever_ecef): #TODO eventua
   cdef sdiff_t sdiffs_[32]
   cdef sdiff_t s_
   for (i,sdiff) in enumerate(sdiffs):
-    s_ = (<SingleDiff> sdiffs).sdiff
+    s_ = (<SingleDiff> sdiff).sdiff
     memcpy(&sdiffs_[i], &s_, sizeof(sdiff_t))
   
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
