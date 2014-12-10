@@ -23,7 +23,7 @@ cdef class SingleDiff:
                snr,
                prn):
     self.pseudorange = pseudorange
-    self.carrier_phase
+    self.carrier_phase = carrier_phase
     self.doppler = doppler
     self.sat_pos = sat_pos
     self.sat_vel = sat_vel
