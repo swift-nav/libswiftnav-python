@@ -33,7 +33,9 @@ cdef class GpsTime:
     def __set__(self, tow):
       self.gps_time.tow = tow
 
+#TODO make sure the time conversions are correct
 def gpst_components2datetime(wn, tow):
+  # TODO lookup the sign on the 16 seconds
   dt = datetime.timedelta(weeks=wn, seconds=tow)
   return dt + datetime.datetime(1980, 1, 6, 0, 0, 0) + \
       datetime.timedelta(seconds=16)
@@ -42,7 +44,8 @@ def gpst2datetime(GpsTime gpst):
   return gpst_components2datetime(gpst.wn, gpst.tow)
 
 def datetime2gpst(timestamp):
-  dt = timestamp - datetime.datetime(1980, 1, 6, 0, 0, 0) + \
+  # TODO lookup the sign on the 16 seconds
+  dt = timestamp - datetime.datetime(1980, 1, 6, 0, 0, 0) - \
       datetime.timedelta(seconds=16)
   wn = dt.days / 7
   tow = (dt - datetime.timedelta(weeks=wn)).total_seconds()
