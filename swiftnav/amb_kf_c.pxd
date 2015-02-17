@@ -24,10 +24,6 @@ cdef extern from "libswiftnav/amb_kf.h":
     double *state_mean
     double *state_cov_U
     double *state_cov_D
-  s8 udu(u32 n, double *M, double *U, double *D)
-  void triu(u32 n, double *M)
-  void eye(u32 n, double *M)
-  void reconstruct_udu(u32 n, double *U, double *D, double *M)
   void predict_forward(nkf_t *kf)
   void update_scalar_measurement(u32 state_dim, double *h, double R,
                                  double *U, double *D, double *k)

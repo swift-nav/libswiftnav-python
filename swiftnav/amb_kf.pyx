@@ -18,30 +18,6 @@ from gpstime_c cimport *
 from single_diff_c cimport *
 from dgnss_management_c cimport *
 
-# def udu(M):
-#   n = M.shape[0]
-#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] M_ = \
-#     np.array(M, dtype=np.double)
-#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
-#     np.empty((n,n), dtype=np.double)
-#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
-#     np.empty(n, dtype=np.double)
-#   amb_kf_c.udu(n, <double *> &M_[0,0], <double *> &U[0,0], <double *> &D[0])
-#   return UDU_decomposition(U, D)
-
-# def reconstruct_udu(ud):
-#   n = ud.D.shape[0]
-
-#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] U = \
-#     np.array(ud.U, dtype=np.double)
-#   cdef np.ndarray[np.double_t, ndim=1, mode="c"] D = \
-#     np.array(ud.D, dtype=np.double)
-
-#   cdef np.ndarray[np.double_t, ndim=2, mode="c"] M = \
-#     np.empty((n,n), dtype=np.double)
-
-#   amb_kf_c.reconstruct_udu(n, <double *> &U[0,0], <double *> &D[0], <double *> &M[0,0])
-#   return M
 
 # def update_scalar_measurement(h, R, U, D):
 #   state_dim = h.shape[0]
@@ -81,12 +57,7 @@ from dgnss_management_c cimport *
 
 #   return state_mean_, UDU_decomposition(state_cov_U_, state_cov_D_)
 
-# class UDU_decomposition:
-#   def __init__(self, U, D):
-#     self.U = U
-#     self.D = D
-#   def reconstruct(self):
-#     return reconstruct_udu(self)
+
 
 cdef class KalmanFilter:
   def __init__(self,
