@@ -27,7 +27,7 @@ cdef extern from "libswiftnav/amb_kf.h":
   void predict_forward(nkf_t *kf)
   void update_scalar_measurement(u32 state_dim, double *h, double R,
                                  double *U, double *D, double *k)
-  void kalman_filter_update(nkf_t *kf, double *measurements)
+  void nkf_update(nkf_t *kf, double *measurements)
 
   void assign_transition_mtx(u32 state_dim, double dt, double *transition_mtx)
   void assign_d_mtx(u8 num_sats, double *D)
