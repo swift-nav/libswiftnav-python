@@ -501,6 +501,11 @@ def dgnss_iar_pool_ll(ambs):
     np.array(ambs, dtype=np.double)
   return dgnss_management_c.dgnss_iar_pool_ll(len(ambs), &ambs_[0])
 
+def dgnss_iar_pool_prob(ambs):
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
+    np.array(ambs, dtype=np.double)
+  return dgnss_management_c.dgnss_iar_pool_prob(len(ambs), &ambs_[0])
+
 def get_amb_kf_mean():
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs = \
     np.empty(32, dtype=np.double)
