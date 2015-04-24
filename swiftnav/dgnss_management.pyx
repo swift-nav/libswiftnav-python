@@ -154,6 +154,10 @@ def dgnss_iar_get_single_hyp(num_dds):
   dgnss_management_c.dgnss_iar_get_single_hyp(&hyp[0])
   return hyp
 
+def get_sats_management_num_sats():
+  cdef sats_management_t * sats_man = dgnss_management_c.get_sats_management()
+  return sats_man.num_sats
+
 def get_sats_management():
   cdef sats_management_t * sats_man = dgnss_management_c.get_sats_management()
   cdef np.ndarray[np.uint8_t, ndim=1, mode="c"] prns = \
@@ -163,6 +167,8 @@ def get_sats_management():
 
 def dgnss_new_float_baseline(sdiffs, ref_ecef):
   cdef u8 num_sats = len(sdiffs)
+  if num_sats < 4:
+    return 0, np.array([np.nan]*3, dtype=np.double)
   cdef u8 num_used
   cdef sdiff_t sdiffs_[32]
   cdef sdiff_t s_
@@ -489,6 +495,16 @@ def dgnss_iar_pool_contains(ambs):
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
     np.array(ambs, dtype=np.double)
   return dgnss_management_c.dgnss_iar_pool_contains(&ambs_[0]) == 1
+
+def dgnss_iar_pool_ll(ambs):
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
+    np.array(ambs, dtype=np.double)
+  return dgnss_management_c.dgnss_iar_pool_ll(len(ambs), &ambs_[0])
+
+def dgnss_iar_pool_prob(ambs):
+  cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs_ = \
+    np.array(ambs, dtype=np.double)
+  return dgnss_management_c.dgnss_iar_pool_prob(len(ambs), &ambs_[0])
 
 def get_amb_kf_mean():
   cdef np.ndarray[np.double_t, ndim=1, mode="c"] ambs = \
