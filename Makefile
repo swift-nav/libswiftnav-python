@@ -31,7 +31,14 @@ docs:
 test:
 	@echo "Running tests..."
 	@echo
-	tox
+	git submodule init
+	git submodule update
+	virtualenv testing_env
+	./testing_env/bin/pip install -r requirements.txt
+	./testing_env/bin/python setup.py build
+	./testing_env/bin/python setup.py install
+	./testing_env/bin/py.test -v tests/
+	# tox
 	@echo
 	@echo "Finished!"
 
