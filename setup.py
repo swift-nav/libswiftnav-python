@@ -110,10 +110,10 @@ if __name__ == "__main__":
     ext_path = ext_name.replace('.', os.path.sep) + '.pyx'
     return Extension(
       ext_name, [ext_path],
-      include_dirs = [np.get_include(), '.'],
+      include_dirs = [np.get_include(), '.', '/usr/local/include/'],
       extra_compile_args = ['-O0', '-g'], #['-O3', '-Wall', '-Wno-unused-function'],
-      extra_link_args = ['-g'],
-      libraries = ['m', 'swiftnav'],
+      extra_link_args = ['-g', '-L/usr/local/lib/'],
+      libraries = ['m', 'swiftnav', 'fec'],
     )
 
   ext_names = [
@@ -131,11 +131,11 @@ if __name__ == "__main__":
     'swiftnav.gpstime',
     'swiftnav.observation',
     'swiftnav.dgnss_management',
-    'swiftnav.ambiguity_test'
+    'swiftnav.ambiguity_test',
+    'swiftnav.viterbi27'
   ]
 
   extensions = [make_extension(name) for name in ext_names]
-
   setup_args['ext_modules'] = extensions
   setup_args['cmdclass'] = {'build_ext': build_ext}
 
