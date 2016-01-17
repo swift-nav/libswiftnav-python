@@ -1,7 +1,0 @@
-
-============
-Installation
-============
-
-.. automodule:: setup
-
